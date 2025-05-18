@@ -2,6 +2,7 @@ package com.abhinav3254.webflux.sec01;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,21 @@ public class ReactiveWebController {
 
     @GetMapping("products")
     public Flux<Product> getProducts() {
+        return this.webClient.get()
+                .uri("demo01/products")
+                .retrieve()
+                .bodyToFlux(Product.class)
+                .doOnNext(product -> log.info("received {}",product));
+    }
+
+
+    /**
+     * In this method we have added TEXT_EVENT_STREAM_VALUE as media type so that browser
+     * will understand okay this is stream of messages
+     * @return List<Flux> of product
+     */
+    @GetMapping(value = "products/stream",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<Product> getProductsStream() {
         return this.webClient.get()
                 .uri("demo01/products")
                 .retrieve()
