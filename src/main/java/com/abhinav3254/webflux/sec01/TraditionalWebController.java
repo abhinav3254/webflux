@@ -45,7 +45,7 @@ public class TraditionalWebController {
     @GetMapping("products2")
     public Flux<Product> getProducts2() {
 
-        // Why this wrong because see this part even you can cancel the last line (fromIterable) will understand that okay we have to cancel
+        // Why this is wrong because see this part even you can cancel the last line (fromIterable) will understand that okay we have to cancel
         // the request but this restClient already made the request means that it will still get the response which is not correct
         var list = this.restClient.get()
                 .uri("/demo01/products")
