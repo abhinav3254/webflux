@@ -2,3 +2,9 @@
 ```
 curl -N  http://localhost:8080/reactive/products
 ```
+
+
+Note - 
+In r2dbc we don't have any @OneToOne mapping and 
+other complex queries, instead here we use sql
+queries for complex relationship.
