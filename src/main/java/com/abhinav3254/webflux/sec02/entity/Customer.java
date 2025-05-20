@@ -10,6 +10,7 @@ public class Customer {
 
     @Id
     private Integer id;
+    
     private String name;
     private String email;
 
