@@ -1,5 +1,6 @@
 package com.abhinav3254.webflux.tests.sec02;
 
+import com.abhinav3254.webflux.sec02.entity.Customer;
 import com.abhinav3254.webflux.sec02.repository.CustomerRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -66,6 +67,51 @@ public class Lec01CustomerRepositoryTest extends AbstractTest {
                 .as(StepVerifier::create)
                 .assertNext(c-> Assertions.assertEquals("mike@gmail.com",c.getEmail()))
                 .assertNext(c-> Assertions.assertEquals("jake@gmail.com",c.getEmail()))
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void insertAndDeleteCustomer() {
+        // insert
+        var customer = new Customer();
+        customer.setName("marshal");
+        customer.setEmail("marshal@gmail.com");
+        this.customerRepository.save(customer)
+                // we are using doOnNext bcz we are not sure when we will get the result bcz this is async call.
+                .doOnNext(c->log.info("{}",c))
+                .as(StepVerifier::create)
+                .assertNext(c-> Assertions.assertNotNull(c.getId()))
+                .expectComplete()
+                .verify();
+
+        // count
+        this.customerRepository.count()
+                .as(StepVerifier::create)
+                .expectNext(11l)
+                .expectComplete()
+                .verify();
+
+        // delete
+        this.customerRepository.deleteById(11)
+                .then(this.customerRepository.count())
+                .as(StepVerifier::create)
+                .expectNext(10l)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    public void updateCustomer() {
+        // here query the customer using name
+        this.customerRepository.findByName("ethan")
+                // change the name of the customer
+                .doOnNext(c->c.setName("Noel"))
+                // then save the customer
+                .flatMap(c->this.customerRepository.save(c))
+                .doOnNext(c->log.info("{}",c))
+                .as(StepVerifier::create)
+                .assertNext(c-> Assertions.assertEquals("Noel",c.getName()))
                 .expectComplete()
                 .verify();
     }
