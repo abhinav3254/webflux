@@ -8,3 +8,8 @@ Note -
 In r2dbc we don't have any @OneToOne mapping and 
 other complex queries, instead here we use sql
 queries for complex relationship.
+
+
+
+FLATMAP - 
+If we have mono inside mono then we can use flatmap.
