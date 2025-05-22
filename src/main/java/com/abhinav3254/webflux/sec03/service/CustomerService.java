@@ -5,6 +5,7 @@ import com.abhinav3254.webflux.sec03.dto.CustomerDTO;
 import com.abhinav3254.webflux.sec03.mapper.EntityDTOMapper;
 import com.abhinav3254.webflux.sec03.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +18,11 @@ public class CustomerService {
 
     public Flux<CustomerDTO> getAllCustomer() {
         return this.customerRepository.findAll()
+                .map(EntityDTOMapper::toDTO);
+    }
+
+    public Flux<CustomerDTO> getAllCustomer(Integer page,Integer size) {
+        return this.customerRepository.findBy(PageRequest.of(page,size))
                 .map(EntityDTOMapper::toDTO);
     }
 
