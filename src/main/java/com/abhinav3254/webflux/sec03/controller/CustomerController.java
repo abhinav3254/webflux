@@ -4,6 +4,7 @@ package com.abhinav3254.webflux.sec03.controller;
 import com.abhinav3254.webflux.sec03.dto.CustomerDTO;
 import com.abhinav3254.webflux.sec03.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,8 +22,10 @@ public class CustomerController {
     }
 
     @GetMapping("{id}")
-    public Mono<CustomerDTO> getCustomer(@PathVariable("id") Integer id) {
-        return this.customerService.getCustomerById(id);
+    public Mono<ResponseEntity<CustomerDTO>> getCustomer(@PathVariable("id") Integer id) {
+        return this.customerService.getCustomerById(id)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -31,13 +34,19 @@ public class CustomerController {
     }
 
     @PutMapping("{id}")
-    public Mono<CustomerDTO> updateCustomer(@PathVariable Integer id,@RequestBody Mono<CustomerDTO> customerDTOMono) {
-        return this.customerService.updateCustomer(id,customerDTOMono);
+    public Mono<ResponseEntity<CustomerDTO>> updateCustomer(@PathVariable Integer id,@RequestBody Mono<CustomerDTO> customerDTOMono) {
+        return this.customerService.updateCustomer(id,customerDTOMono)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("{id}")
-    public Mono<Void> deleteCustomer(@PathVariable Integer id) {
-        return this.customerService.deleteCustomerById(id);
+    public Mono<ResponseEntity<Void>> deleteCustomer(@PathVariable Integer id) {
+        return this.customerService.deleteCustomerById(id)
+                .filter(b->b)
+                .map(b->ResponseEntity.ok().<Void>build())
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+
     }
 
 }
